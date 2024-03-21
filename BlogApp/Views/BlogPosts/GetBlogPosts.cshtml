@@ -1,0 +1,59 @@
+﻿@model List<BlogApp.Models.BlogPost>
+
+@{
+    ViewData["Title"] = "BlogPosts";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/css/styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="@Url.Action("CreateBlogPost", "BlogPosts")" class="btn btn-primary mb-3">Create New</a>
+            </div>
+        </div>
+
+        <div class="row">
+            @foreach (var post in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(model => post.Title)</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayFor(model => post.Author)</h6>
+                            <p class="card-text">@Html.DisplayFor(model => post.Content)</p>
+                            <p class="card-text"><small class="text-muted">@Html.DisplayFor(model => post.PublicationDate)</small></p>
+                            <div class="text-right">
+                                @Html.ActionLink("Detail", "Detail", new { id = post.Id }, new { @class = "btn btn-primary btn-sm mr-2" })
+                                @Html.ActionLink("Edit", "Edit", new { id = post.Id }, new { @class = "btn btn-primary btn-sm mr-2" })
+                                @Html.ActionLink("Delete", "Delete", new { id = post.Id }, new { @class = "btn btn-danger btn-sm" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(ViewBag.PageIndex == i ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

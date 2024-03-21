@@ -1,0 +1,90 @@
+﻿@model BlogApp.Models.BlogPost
+@{
+    ViewData["Title"] = "DeletePosts";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Confirmation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</head>
+<body>
+
+    <div class="delete-confirm">
+        <h3>Are you sure you want to delete this post?</h3>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Id)</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.Id)</dd>
+            <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Title)</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.Title)</dd>
+            <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Author)</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.Author)</dd>
+            <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Content)</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.Content)</dd>
+            <dt class="col-sm-2">@Html.DisplayNameFor(model => model.PublicationDate)</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.PublicationDate)</dd>
+        </dl>
+
+        <form id="deleteForm" action="@Url.Action("DeleteConfirmed", "BlogPosts")" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="form-group">
+                <button type="button" id="deleteBtn" class="btn btn-danger">Delete</button>
+                <a asp-action="GetBlogPosts" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Delete Success Modal -->
+    <div class="modal fade" id="deleteSuccessModal" tabindex="-1" role="dialog" aria-labelledby="deleteSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="deleteSuccessModalLabel">Success</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle fa-4x text-success"></i>
+                    <p class="text-success">Post deleted successfully.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#deleteBtn').click(function () {
+                if (confirm('Are you sure you want to delete this post?')) {
+                    $.ajax({
+                        url: $('#deleteForm').attr('action'),
+                        type: 'POST',
+                        data: $('#deleteForm').serialize(),
+                        success: function (result) {
+                            // Show success modal
+                            $('#deleteSuccessModal').modal('show');
+
+                            // Delay redirect after 2 seconds
+                            setTimeout(function () {
+                                window.location.href = '@Url.Action("GetBlogPosts", "BlogPosts")';
+                            }, 2000);
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error, maybe show an error message
+                            alert('Error occurred while deleting post.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
